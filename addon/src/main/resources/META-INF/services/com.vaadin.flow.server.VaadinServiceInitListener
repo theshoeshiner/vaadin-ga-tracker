@@ -1,1 +1,1 @@
-org.vaadin.googleanalytics.tracking.InitListener
+org.vaadin.googleanalytics.tracking.GoogleAnalyticsInitListener

@@ -63,6 +63,8 @@ public @interface EnableGoogleAnalytics {
      * @return the used send mode
      */
     SendMode sendMode() default SendMode.PRODUCTION;
+    
+    boolean debugMode() default false;
 
     /**
      * A prefix to add to the URL of all page views. By default, not prefix is
@@ -95,7 +97,7 @@ public @interface EnableGoogleAnalytics {
         DEBUG {
             @Override
             public void apply(TrackerConfiguration config) {
-                config.setScriptUrl("https://www.google-analytics.com/analytics_debug.js");
+                //config.setScriptUrl("https://www.google-analytics.com/analytics_debug.js");
             }
         },
         /**
@@ -105,7 +107,7 @@ public @interface EnableGoogleAnalytics {
             @Override
             public void apply(TrackerConfiguration config) {
                 LogLevel.DEBUG.apply(config);
-                config.setGaDebug("trace", Boolean.TRUE);
+                //config.setGaDebug("trace", Boolean.TRUE);
             }
         };
 

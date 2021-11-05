@@ -22,11 +22,14 @@ public class TrackerConfiguration {
     public static final String DEFAULT_COOKIE_DOMAIN = "auto";
 
     private String trackingId;
+    private String tagId;
     private String cookieDomain = DEFAULT_COOKIE_DOMAIN;
     private String pageViewPrefix = "";
-    private String scriptUrl = "https://www.google-analytics.com/analytics.js";
+    //private String scriptUrl = "https://www.google-analytics.com/analytics.js";
+    private String scriptRootUrl = "https://www.googletagmanager.com/gtag/js?id=";
+    private Boolean debugMode;
 
-    private final Map<String, Serializable> gaDebug = new LinkedHashMap<>();
+    //private final Map<String, Serializable> gaDebug = new LinkedHashMap<>();
 
     private final Map<String, Serializable> createParameters = new LinkedHashMap<>();
 
@@ -64,6 +67,15 @@ public class TrackerConfiguration {
 
         this.trackingId = trackingId;
 
+        return this;
+    }
+    
+    public TrackerConfiguration setTagId(String tagId) {
+        if (tagId == null || tagId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tag id must be defined");
+        }
+
+        this.tagId = tagId;
         return this;
     }
 
@@ -123,7 +135,7 @@ public class TrackerConfiguration {
      * @return this configuration, for chaining
      */
     public TrackerConfiguration setScriptUrl(String scriptUrl) {
-        this.scriptUrl = Objects.requireNonNull(scriptUrl);
+        this.scriptRootUrl = Objects.requireNonNull(scriptUrl);
         return this;
     }
 
@@ -133,10 +145,28 @@ public class TrackerConfiguration {
      * @return
      */
     public String getScriptUrl() {
-        return scriptUrl;
+        return scriptRootUrl+tagId;
+    }
+    
+    public String getScriptRootUrl() {
+        return scriptRootUrl;
+    }
+    
+    public String getTagId() {
+    	return tagId;
     }
 
-    /**
+    
+    
+    public Boolean getDebugMode() {
+		return debugMode;
+	}
+
+	public void setDebugMode(Boolean debugMode) {
+		this.debugMode = debugMode;
+	}
+
+	/**
      * Sets a custom field value to use when creating the client-side tracker.
      * 
      * @see <a href=
@@ -207,10 +237,10 @@ public class TrackerConfiguration {
      *            the value
      * @return this configuration, for chaining
      */
-    public TrackerConfiguration setGaDebug(String name, Serializable value) {
-        gaDebug.put(Objects.requireNonNull(name), value);
-        return this;
-    }
+	/* public TrackerConfiguration setGaDebug(String name, Serializable value) {
+	    gaDebug.put(Objects.requireNonNull(name), value);
+	    return this;
+	}*/
 
     /**
      * Removes a debug parameter value.
@@ -221,10 +251,10 @@ public class TrackerConfiguration {
      *            the parameter name, not <code>null</code>
      * @return this configuration, for chaining
      */
-    public TrackerConfiguration removeGaDebug(String name) {
-        gaDebug.remove(Objects.requireNonNull(name));
-        return this;
-    }
+	/*public TrackerConfiguration removeGaDebug(String name) {
+	    gaDebug.remove(Objects.requireNonNull(name));
+	    return this;
+	}*/
 
     /**
      * Gets all the custom fields to pass when creating the client-side tracker.
@@ -256,9 +286,9 @@ public class TrackerConfiguration {
      * 
      * @return an unmodifiable map of debug settings, not <code>null</code>
      */
-    public Map<String, Serializable> getGaDebug() {
-        return Collections.unmodifiableMap(gaDebug);
-    }
+	/*  public Map<String, Serializable> getGaDebug() {
+	    return Collections.unmodifiableMap(gaDebug);
+	}*/
 
     /**
      * Creates a tracker configuration with default settings based on a log
@@ -296,8 +326,10 @@ public class TrackerConfiguration {
         TrackerConfiguration config = create(logLevel, shouldSend);
 
         config.setTrackingId(annotation.value());
+        config.setTagId(annotation.value());
         config.setCookieDomain(annotation.cookieDomain());
         config.setPageViewPrefix(annotation.pageviewPrefix());
+        config.debugMode = annotation.debugMode();
 
         return config;
     }
